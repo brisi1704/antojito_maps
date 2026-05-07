@@ -64,27 +64,52 @@
           {{ 'RESTAURANT_VIEW.PROMOS_TITLE' | translate }}
         </h2>
 
-        @if (promociones.length === 0) {
+        @if (cargandoPromociones) {
+          <div class="rv-empty">
+            <div class="rv-inline-spinner"></div>
+            <p>{{ 'RESTAURANT_VIEW.LOADING' | translate }}</p>
+          </div>
+        }
+
+        @if (promocionesError && !cargandoPromociones) {
+          <div class="rv-empty rv-empty-error">
+            <span>!</span>
+            <p>{{ 'RESTAURANT_VIEW.ERROR_LOAD' | translate }}</p>
+          </div>
+        }
+
+        @if (!promocionesError && !cargandoPromociones && promociones.length === 0) {
           <div class="rv-empty">
             <span>🏷️</span>
             <p>{{ 'RESTAURANT_VIEW.PROMOS_EMPTY' | translate }}</p>
           </div>
         }
 
-        <div class="rv-promos-grid">
-          @for (promo of promociones; track promo.id) {
+        @if (!cargandoPromociones && promociones.length > 0) {
+          <div class="rv-promos-grid">
+            @for (promo of promociones; track promo.uuid) {
             <div class="rv-promo-card">
               <div class="rv-promo-header">
-                <span class="rv-promo-badge">{{ promo.descuento }} OFF</span>
+                <span class="rv-promo-badge">{{ formatDiscount(promo.percentDiscount) }}% OFF</span>
               </div>
               <div class="rv-promo-body">
-                <h3 class="rv-promo-nombre">{{ promo.nombre }}</h3>
-                <p class="rv-promo-desc">{{ promo.descripcion }}</p>
-                <span class="rv-promo-precio">Bs {{ promo.precio }}</span>
+                <h3 class="rv-promo-nombre">{{ promo.title }}</h3>
+                @if (promo.description) {
+                  <p class="rv-promo-desc">{{ promo.description }}</p>
+                }
+                @if (promo.dateStartPromotion || promo.dateEndPromotion) {
+                  <span class="rv-promo-precio">
+                    {{ promo.dateStartPromotion || '' }}
+                    @if (promo.dateEndPromotion) {
+                      <span> - {{ promo.dateEndPromotion }}</span>
+                    }
+                  </span>
+                }
               </div>
             </div>
-          }
-        </div>
+            }
+          </div>
+        }
       </section>
 
       <section class="rv-section">
