@@ -568,7 +568,14 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   buscarRestaurante(texto: string): void { this.textoBusqueda = texto; this.filtrarRestaurantes(); }
   seleccionarCategoria(slug: string): void { this.categoriaSeleccionada = slug; this.router.navigate([], { queryParams: { categoria: slug || null }, queryParamsHandling: 'merge' }); this.filtrarRestaurantes(); }
   verTodasLasCategorias(): void { this.seleccionarCategoria(''); }
-  volverAlInicio(): void { this.location.back(); }
   centrarEnMiUbicacion(): void { this.obtenerUbicacion(); }
+  volverAlInicio(): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+    } else {
+      this.router.navigate(['/inicio']);
+    }
+  }
 }
 
