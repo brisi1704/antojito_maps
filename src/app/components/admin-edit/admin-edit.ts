@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdminService } from '../../core/services/admin.service';
 import { AdminSessionService } from '../../core/services/admin-session.service';
+// IMPORTANTE: Asegúrate de tener estas importaciones
+import { timeout, catchError, finalize } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-admin-edit',
@@ -14,11 +17,9 @@ import { AdminSessionService } from '../../core/services/admin-session.service';
   styleUrl: './admin-edit.css'
 })
 export class AdminEdit implements OnInit {
-
   editMail = '';
   editPassword = '';
   showPass = false;
-
   errorMsg = '';
   successMsg = '';
   guardando = false;
@@ -32,23 +33,24 @@ export class AdminEdit implements OnInit {
     private location: Location
   ) {}
 
-  //Esta parte es como "seguridad", quitar si es que lo quieres revisar de manera local
   ngOnInit(): void {
     const currentSession = this.adminSession.getSession();
     if (!currentSession) {
       this.router.navigate(['/admin/login']);
       return;
     }
-
     this.editMail = currentSession.mail;
   }
 
   guardarEdicionPropia(): void {
+    if (this.guardando) return; // Evita múltiples clics
+
     this.errorMsg = '';
     this.successMsg = '';
     this.fieldErrors = {};
 
     const mail = this.editMail.trim().toLowerCase();
+    
     if (!mail || !mail.includes('@')) {
       this.errorMsg = this.translate.instant('ADMIN_CREATE.ERR_EMAIL');
       return;
@@ -59,37 +61,50 @@ export class AdminEdit implements OnInit {
     }
 
     this.guardando = true;
-    this.adminService.editAdmin(mail, this.editPassword).subscribe({
-      next: (response) => {
-        this.guardando = false;
-        const resolvedMail = `${response?.mail ?? mail}`.trim().toLowerCase();
-        this.successMsg = response?.message || 'Administrador actualizado correctamente';
 
+    this.adminService.editAdmin(mail, this.editPassword).pipe(
+      timeout(5000), // Si en 5 segundos no hay respuesta, aborta
+      finalize(() => {
+        // ESTO ES LO MÁS IMPORTANTE: 
+        // Se ejecuta SIEMPRE, ya sea éxito o error. Rompe el loop sí o sí.
+        this.guardando = false;
+      }),
+      catchError(err => {
+        // Manejo de errores de conexión
+        if (err.name === 'TimeoutError') {
+          this.errorMsg = 'Tiempo de espera agotado. El servidor no responde.';
+        } else if (err.status === 0) {
+          this.errorMsg = 'Servidor no detectado. Verifica que el backend esté corriendo.';
+        } else {
+          this.errorMsg = err?.error?.message || 'Error de comunicación con el servidor.';
+        }
+        return throwError(() => err);
+      })
+    ).subscribe({
+      next: (response) => {
+        this.successMsg = response?.message || 'Administrador actualizado correctamente';
+        
+        // Actualizar sesión
         const session = this.adminSession.getSession();
         if (session) {
           this.adminSession.setSession({
             adminId: session.adminId,
-            mail: resolvedMail
+            mail: (response?.mail || mail).trim().toLowerCase()
           });
         }
 
-        this.editMail = resolvedMail;
         this.editPassword = '';
+
+        // Redirección forzada tras éxito
+        setTimeout(() => {
+          this.router.navigate(['/admin/restaurants']);
+        }, 1500);
       },
       error: (err) => {
-        this.guardando = false;
+        // Los errores de validación del backend se capturan aquí
         this.fieldErrors = err?.error?.validationErrors ?? {};
-
-        if (this.fieldErrors['mail']) {
-          this.errorMsg = this.fieldErrors['mail'];
-          return;
-        }
-        if (this.fieldErrors['password']) {
-          this.errorMsg = this.fieldErrors['password'];
-          return;
-        }
-
-        this.errorMsg = err?.error?.message || this.translate.instant('ADMIN_DELETED.SUBTITLE');
+        if (this.fieldErrors['mail']) this.errorMsg = this.fieldErrors['mail'];
+        if (this.fieldErrors['password']) this.errorMsg = this.fieldErrors['password'];
       }
     });
   }

@@ -252,6 +252,17 @@
     "ERR_NO_CONNECTION": "Could not connect to the server",
     "ERR_GENERIC": "Failed to create administrator"
   },
+  "ADMIN_EDIT": {
+    "TITLE": "Edit Administrator",
+    "SUBTITLE": "Update your account credentials",
+    "LBL_PASSWORD": "New Password",
+    "HINT_PASSWORD": "Minimum 6 characters",
+    "BTN_SAVE": "Save Changes",
+    "SUCCESS": "Administrator updated successfully",
+    "ERR_SAVE": "Error updating credentials",
+    "ERR_SERVER": "No connection to server",
+    "REDIRECTING": "Redirecting"
+  },
   "ADMIN_DELETED": {
     "BACK": "Back",
     "TITLE": "Deleted Administrators",
