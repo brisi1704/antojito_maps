@@ -1,8 +1,7 @@
 <div class="ae-page">
   <div class="ae-card">
 
-    <!-- Botón volver -->
-    <button class="ae-btn-back" (click)="volver()">
+    <button class="ae-btn-back" (click)="volver()" [disabled]="guardando">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round">
@@ -12,14 +11,12 @@
       {{ 'ADMIN_DELETED.BACK' | translate }}
     </button>
 
-    <!-- Header -->
     <div class="ae-header">
       <div class="ae-icon">✏️</div>
-      <h2 class="ae-title">{{ 'ADMIN_LIST.TITLE' | translate }}</h2>
-      <p class="ae-subtitle">Actualiza las credenciales de tu cuenta</p>
+      <h2 class="ae-title">{{ 'ADMIN_EDIT.TITLE' | translate }}</h2>
+      <p class="ae-subtitle">{{ 'ADMIN_EDIT.SUBTITLE' | translate }}</p>
     </div>
 
-    <!-- Correo -->
     <div class="ae-field">
       <label class="ae-label">{{ 'ADMIN_CREATE.PLACEHOLDER_EMAIL' | translate }}</label>
       <div class="ae-input-wrap">
@@ -33,6 +30,7 @@
           class="ae-input"
           type="email"
           [(ngModel)]="editMail"
+          [disabled]="guardando"
           [class.ae-input-error]="fieldErrors['mail']"
           placeholder="admin@antojitosmaps.com"
           autocomplete="email">
@@ -42,9 +40,8 @@
       }
     </div>
 
-    <!-- Nueva contraseña -->
     <div class="ae-field">
-      <label class="ae-label">Nueva contraseña</label>
+      <label class="ae-label">{{ 'ADMIN_EDIT.LBL_PASSWORD' | translate }}</label>
       <div class="ae-input-wrap">
         <svg class="ae-input-icon" width="16" height="16" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2"
@@ -56,6 +53,7 @@
           class="ae-input"
           [type]="showPass ? 'text' : 'password'"
           [(ngModel)]="editPassword"
+          [disabled]="guardando"
           [class.ae-input-error]="fieldErrors['password']"
           [placeholder]="'ADMIN_LOGIN.PASS_PLACEHOLDER' | translate"
           autocomplete="new-password">
@@ -77,10 +75,9 @@
       @if (fieldErrors['password']) {
         <span class="ae-error">{{ fieldErrors['password'] }}</span>
       }
-      <span class="ae-hint">Mínimo 6 caracteres</span>
+      <span class="ae-hint">{{ 'ADMIN_EDIT.HINT_PASSWORD' | translate }}</span>
     </div>
 
-    <!-- Mensajes -->
     @if (errorMsg) {
       <div class="ae-banner-error">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -99,22 +96,23 @@
           stroke="currentColor" stroke-width="2">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
-        {{ successMsg }}
+        {{ 'ADMIN_EDIT.SUCCESS' | translate }}
       </div>
     }
 
-    <!-- Botón guardar -->
-    <button class="ae-btn-save" (click)="guardarEdicionPropia()" [disabled]="guardando">
+    <button class="ae-btn-save" (click)="guardarEdicionPropia()" [disabled]="guardando || !!successMsg">
       @if (guardando) {
         <span class="ae-spinner"></span>
         {{ 'ADMIN_LOGIN.BTN_LOADING' | translate }}
+      } @else if (successMsg) {
+        {{ 'ADMIN_EDIT.REDIRECTING' | translate }}...
       } @else {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5"
           stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
-        {{ 'ADMIN_LIST.BTN_SAVE' | translate }}
+        {{ 'ADMIN_EDIT.BTN_SAVE' | translate }}
       }
     </button>
 
