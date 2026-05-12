@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ClientSessionService } from './client-session.service';
 
@@ -37,21 +37,24 @@ export class ChatService {
     private clientSession: ClientSessionService
   ) {}
 
-  private getClientHeaders(): HttpHeaders {
+  private buildHeaders(): { headers?: HttpHeaders } {
     const clientId = this.clientSession.getClientId();
-    if (!clientId) {
-      throw new Error('No hay sesion de cliente activa. Por favor inicia sesion.');
+    if (clientId) {
+      return { headers: new HttpHeaders({ 'X-Client-Id': clientId }) };
     }
-    return new HttpHeaders({ 'X-Client-Id': clientId });
+    return {};
   }
 
   enviarMensaje(request: ChatRequest): Observable<ChatResponse> {
-    const headers = this.getClientHeaders();
-    return this.http.post<ChatResponse>(`${this.BASE_URL}/chat`, request, { headers });
+    return this.http.post<ChatResponse>(`${this.BASE_URL}/chat`, request, this.buildHeaders());
   }
 
   obtenerHistorial(): Observable<ConversationHistory> {
-    const headers = this.getClientHeaders();
+    const clientId = this.clientSession.getClientId();
+    if (!clientId) {
+      return EMPTY;
+    }
+    const headers = new HttpHeaders({ 'X-Client-Id': clientId });
     return this.http.get<ConversationHistory>(`${this.BASE_URL}/chat/history`, { headers });
   }
 }
