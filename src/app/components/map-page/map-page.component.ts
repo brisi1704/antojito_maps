@@ -305,15 +305,11 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
     const userLocation = this.locationMarker?.getLatLng();
 
     this.chatService.enviarMensaje({
-      conversationId: this.conversationId ?? undefined,
       message: trimmed,
       latitude: userLocation?.lat,
       longitude: userLocation?.lng
     }).subscribe({
       next: (res) => {
-        this.conversationId = res.conversationId;
-        localStorage.setItem('antojitos_conversationId', res.conversationId);
-
         this.chatbotEscribiendo = false;
         this.agregarMensaje('bot', res.reply);
 

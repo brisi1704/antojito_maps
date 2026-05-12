@@ -240,6 +240,17 @@
     "ERR_NO_CONNECTION": "Não foi possível conectar ao servidor",
     "ERR_GENERIC": "Não foi possível criar o administrador"
   },
+  "ADMIN_EDIT": {
+    "TITLE": "Editar administrador",
+    "SUBTITLE": "Atualize as credenciais da sua conta",
+    "LBL_PASSWORD": "Nova senha",
+    "HINT_PASSWORD": "Mínimo de 6 caracteres",
+    "BTN_SAVE": "Salvar alterações",
+    "SUCCESS": "Administrador atualizado com sucesso",
+    "ERR_SAVE": "Erro ao atualizar as credenciais",
+    "ERR_SERVER": "Sem conexão com o servidor",
+    "REDIRECTING": "Redirecionando"
+  },
   "ADMIN_DELETED": {
     "BACK": "Voltar",
     "TITLE": "Administradores excluídos",
