@@ -346,6 +346,10 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
     this.chatMensajes.push({ id, rol, texto, hora: this.horaActual() });
   }
 
+  convertirMarkdown(texto: string): string {
+  return texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }
+
   private scrollAlFinal(): void {
     if (this.chatMessagesRef?.nativeElement) {
       const el = this.chatMessagesRef.nativeElement;
