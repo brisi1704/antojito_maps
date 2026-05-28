@@ -1,6 +1,6 @@
 import {
   Component, OnInit, AfterViewInit, OnDestroy,
-  ChangeDetectorRef, ViewChild, ElementRef
+  ChangeDetectorRef, ViewChild, ElementRef, HostListener
 } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -110,6 +110,13 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.initMap();
     this.obtenerUbicacion();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this.map) {
+      this.map.invalidateSize();
+    }
   }
 
   ngOnDestroy(): void {
