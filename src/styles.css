@@ -31,3 +31,10 @@ body, html {
 .am-logo {
   cursor: pointer !important;
 }
+
+/* Asegurar que el contenedor raíz de Angular y las páginas ocupen el ancho/alto completo del viewport */
+app-root, app-map-page, app-pagina-principal, app-restaurant-view {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
