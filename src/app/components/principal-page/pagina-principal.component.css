@@ -288,13 +288,26 @@
   .am-strip, .am-how, .am-roles { padding-left: 24px; padding-right: 24px; }
 }
 @media (max-width: 600px) {
-  .am-nav { padding: 16px 24px; }
+  .am-nav { 
+    padding: 16px 24px; 
+    flex-direction: column; 
+    gap: 16px; 
+  }
+  .am-nav-actions { 
+    flex-direction: column; 
+    width: 100%; 
+    gap: 12px; 
+  }
+  .am-nav-btn, .am-nav-btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
   .am-nav-links { display: none; }
   .am-hero-title { font-size: 2.4rem; }
   .am-hero-sub { font-size: 15px; }
   .am-hero-cta { flex-direction: column; }
   .am-btn-p, .am-btn-o { width: 100%; justify-content: center; }
-  .am-stats { gap: 20px; }
+  .am-stats { gap: 20px; flex-wrap: wrap; justify-content: center; }
   .am-footer { flex-direction: column; gap: 8px; text-align: center; padding: 24px; }
 }
 
