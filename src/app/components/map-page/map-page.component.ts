@@ -613,10 +613,11 @@ export class MapPage implements OnInit, AfterViewInit, OnDestroy {
   centrarEnMiUbicacion(): void { this.obtenerUbicacion(); }
   volverAlInicio(): void {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    if (returnUrl) {
+    
+    if (returnUrl && !returnUrl.includes('login')) {
       this.router.navigateByUrl(returnUrl);
     } else {
-      this.router.navigate(['/inicio']);
+      this.location.back();
     }
   }
   irAlPerfil(): void {
